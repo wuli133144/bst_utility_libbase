@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/opt/boost/p3/base/config/config.cc
+config.h
+/opt/boost/p3/base/config/config.h
+
+/opt/boost/p3/base/config/config.h
+iostream
+-
+string
+-
+boost/property_tree/ptree.hpp
+-
+boost/property_tree/xml_parser.hpp
+-
+boost/typeof/typeof.hpp
+-
+
