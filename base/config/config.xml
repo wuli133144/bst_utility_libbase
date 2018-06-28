@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <con> 
  <id>1</id> 
- <name value="jackwu" age=1 >fansy</name> 
+ <name value="jackwu">fansy</name> 
  <urls> 
   <url>http://blog.csdn.net//fansongy</url> 
   <url>http://weibo.com//fansongy</url> 

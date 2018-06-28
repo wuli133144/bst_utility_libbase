@@ -54,46 +54,34 @@ template<typename T>
 		 return all_object;
   }
 
-#if 0
   template<typename T>
 	T Config::GetNodeAttrValue(const char *node,const char *attr)
   	{
 
-	         
-			 //auto iter=pt.begin();
-			 //cout<<iter.first.data()<<std::endl;
-
-			 string dest(node);
-			 int pos=dest.find_last_of(".");
-			 string src=dest.substr(0,pos);
-			 string targets_node=dest.substr(pos+1,dest.size()-pos);
-
-			 std::cout<<src<<"   "<<targets_node<<std::endl;
-			 
-  			 ptree pt=m_pt.get_child(src.c_str());
-			 auto iter=pt.begin();
-			 for(;iter!=pt.end();iter++){
-			 	 if(iter->first==targets_node.c_str()){
-				 	 break;
-				 }
-			 }
-			 return iter->second.get<T>("<xmlattr>."+std::string(attr));
-   
+	        string dest("");
+			for(const ptree::value_type &v:m_pt.get_child(std::string(node)+".<xmlattr>")){
+                  if(v.first==attr){
+				  	dest=v.second.data();
+				  	break;
+				  }
+			}
+            return dest;
   	}
-#endif 
+
 
 #if   1
 
 int main(){
 
          Config config("config.xml");
-
+         
 		 
-		 string attr=config.GetNodeAttrValue<string>("con.name","value");
+		 string attr=config.GetNodeAttrValue<string>("con.name","ip");
 
 
 		 std::cout<<"attr:value"<<attr<<std::endl;
-
+		 
+	
 
 
 

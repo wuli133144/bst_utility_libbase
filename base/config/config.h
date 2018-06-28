@@ -30,8 +30,8 @@ public:
 	template<typename T>
 		std::vector<T> GetList(const char *node);
 	
-	//template<typename T>
-	//	T GetNodeAttrValue(const char *,const char *);
+	template<typename T>
+		T GetNodeAttrValue(const char *,const char *);
 
 private:
 	ptree m_pt;
