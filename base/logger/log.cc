@@ -25,20 +25,20 @@ void Clogger::Init(const char *prg,const char *config)
 }
 
 
-#define INFO(fmt,args...)                \
-     do{                                 \
-	 	  char buffer[1024];             \
-		  memset(buffer,0,sizeof(buffer));\
-	      sprintf(buffer,(fmt),##args);    \
+#define INFO(fmt,args...)                   \
+     do{                                    \
+	 	  char buffer[1024];                \
+		  memset(buffer,0,sizeof(buffer));  \
+	      sprintf(buffer,(fmt),##args);     \
 	      LOG4CXX_INFO(Clogger::getInstance()->get(),buffer); \
 	 }while(0)
 
 
 	 
-#define DEBUG(fmt,args...)                    \
-		  do{								  \
-			   char buffer[1024];			  \
-			   memset(buffer,0,sizeof(buffer));\
+#define DEBUG(fmt,args...)                      \
+		  do{								    \
+			   char buffer[1024];			    \
+			   memset(buffer,0,sizeof(buffer)); \
 			   sprintf(buffer,(fmt),##args);	\
 			   LOG4CXX_DEBUG(Clogger::getInstance()->get(),buffer); \
 		  }while(0)
@@ -54,23 +54,27 @@ void Clogger::Init(const char *prg,const char *config)
 
 					
 #define TRACE(fmt,args...)                    \
-		do{ 								\
-			 char buffer[1024]; 			\
-			 memset(buffer,0,sizeof(buffer));\
+		do{ 								  \
+			 char buffer[1024]; 			  \
+			 memset(buffer,0,sizeof(buffer)); \
 			 sprintf(buffer,(fmt),##args);	  \
 			 LOG4CXX_TRACE(Clogger::getInstance()->get(),buffer); \
-		}while(0)
+		 }while(0)
 
 
-
+#if _TEST
 int main(){
    
     //Clogger *lloger=Clogger::getInstance();
 	//INFO("WUYUJIE");
-
+	
 	Clogger *loger=Clogger::getInstance();
     loger.Init("test1","log4cxx.properities");
+	
 	INFO("WUYUJIE %d",2);
 	
 	
    }
+
+#endif 
+
