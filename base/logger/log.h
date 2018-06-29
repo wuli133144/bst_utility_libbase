@@ -37,7 +37,7 @@ public:
 	  
 
 	  LoggerPtr m_logger_file;
-public:
+private:
 	 LoggerPtr m_logger_console;
 	// string config_;
 	// string program_name_;
