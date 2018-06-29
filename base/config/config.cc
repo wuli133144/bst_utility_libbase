@@ -52,10 +52,10 @@ template<typename T>
 		      all_object.push_back(iter->second.data());
 		 }
 		 return all_object;
-  }
+ }
 
-  template<typename T>
-	T Config::GetNodeAttrValue(const char *node,const char *attr)
+ template<typename T>
+ T Config::GetNodeAttrValue(const char *node,const char *attr)
   	{
 
 	        string dest("");
@@ -73,19 +73,11 @@ template<typename T>
 
 int main(){
 
-         Config config("config.xml");
-         
-		 
+         Config config("config.xml");		 
 		 string attr=config.GetNodeAttrValue<string>("con.name","ip");
-
-
 		 std::cout<<"attr:value"<<attr<<std::endl;
 		 
-	
-
-
-
-		 
+            		 
 
 }
 
