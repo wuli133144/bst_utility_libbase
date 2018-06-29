@@ -2,13 +2,28 @@
 
 
 Clogger::Clogger(){
-	m_logger_file=Logger::getLogger("filetimeout");
-	m_logger_console=Logger::getLogger("console");
-	PropertyConfigurator::configureAndWatch("./log4cxx.properties");  
+	
+	
+	//m_logger_console=Logger::getLogger("console");
+	Init();
 }
 
 
 Clogger * Clogger::Instance_=NULL;
+
+void Clogger::Init(const char *prg,const char *config)
+{
+         //config_=_cnf;
+		 //program_name_=prg;
+		 bzero(config_,BUFFERSIZE);
+		 bzero(program_name_,BUFFERSIZE);
+		 memcpy(config_,config,strlen(config));
+		 memcpy(program_name_,prg,strlen(prg));
+		 
+		 PropertyConfigurator::configureAndWatch(config_);  
+	     m_logger_file=Logger::getLogger(program_name_);
+}
+
 
 #define INFO(fmt,args...)                \
      do{                                 \
@@ -30,9 +45,9 @@ Clogger * Clogger::Instance_=NULL;
 
 
 #define ERROR(fmt,args...)                    \
-		do{ 								\
-			 char buffer[1024]; 			\
-			 memset(buffer,0,sizeof(buffer));\
+		do{ 								  \
+			 char buffer[1024]; 			  \
+			 memset(buffer,0,sizeof(buffer)); \
 			 sprintf(buffer,(fmt),##args);	  \
 			 LOG4CXX_ERROR(Clogger::getInstance()->get(),buffer); \
 		}while(0)
@@ -53,6 +68,10 @@ int main(){
     //Clogger *lloger=Clogger::getInstance();
 
 	//INFO("WUYUJIE");
+
+	Clogger loger;
+    loger.Init("test1","log4cxx.properities");
+	
 	INFO("WUYUJIE %d",2);
 	
 	

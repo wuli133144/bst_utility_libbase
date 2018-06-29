@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cassert>
 
 
 using namespace log4cxx;
@@ -32,10 +33,18 @@ public:
 		 return Instance_;
 	  }
       LoggerPtr get(){return m_logger_file;}
+	  void Init(const char *prg="test",const char *config="log4cxx.properities");
 	  
-private:
-	 LoggerPtr m_logger_file;
+
+	  LoggerPtr m_logger_file;
+public:
 	 LoggerPtr m_logger_console;
+	// string config_;
+	// string program_name_;
+	 enum{BUFFERSIZE=1024};
+	 char config_[BUFFERSIZE];
+	 char program_name_[BUFFERSIZE];
+
      Clogger();
 	 
      static Clogger * Instance_;
