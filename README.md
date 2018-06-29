@@ -55,3 +55,20 @@ log4j.appender.filetimeout.layout.ConversionPattern=%d [%-5p %.16c] - %m%n
 
 filename must be called log4cxx.properities,otherwise trouble will happen,
 
+
+######## modify logger 
+
+```
+    int main(){
+	  Clogger logger;
+	  logger.Init("test","properities");
+	  INFO("XXX::XXX,%U,%D",1，2);
+	  return 0;
+	}
+```
+
+> first ,you should declare a variable about Clogger, it will do some initializations,
+>then call Init,config it's logfile,and program's name,
+
+
+
