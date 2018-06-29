@@ -66,12 +66,10 @@ void Clogger::Init(const char *prg,const char *config)
 int main(){
    
     //Clogger *lloger=Clogger::getInstance();
-
 	//INFO("WUYUJIE");
 
-	Clogger loger;
+	Clogger *loger=Clogger::getInstance();
     loger.Init("test1","log4cxx.properities");
-	
 	INFO("WUYUJIE %d",2);
 	
 	
