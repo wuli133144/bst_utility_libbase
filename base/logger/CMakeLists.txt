@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-PROJECT(config)
+PROJECT(test_log)
 
 
 AUX_SOURCE_DIRECTORY(./ SRC_LIST)
@@ -18,12 +18,12 @@ ADD_DEFINITIONS( -g -W -Wall -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DAC_HAS_INFO
 -DAC_HAS_DEBUG -DLINUX_DAEMON -DUSE_CACHE -std=c++11 -DENCRYPT)
 #-DUSE_CACHE
 
-INCLUDE_DIRECTORIES(./ /usr/include)
-LINK_DIRECTORIES(/usr/lib64 ./)
+INCLUDE_DIRECTORIES(./ /usr/local/log4cxx/include/)
+LINK_DIRECTORIES(/usr/lib64 /usr/local/log4cxx/lib)
 
 #ADD_XXXX必须在TARGET_LINK_LIBRARIES前面，否则会报错
 #ADD_LIBRARY(${PROJECTNAME} SHARED/STATIC ${SRC_LIST})
-ADD_EXECUTABLE(config ${SRC_LIST})
+ADD_EXECUTABLE(test_log ${SRC_LIST})
 
-TARGET_LINK_LIBRARIES(config  boost_system boost_thread)
+TARGET_LINK_LIBRARIES(test_log  log4cxx pthread)
  
