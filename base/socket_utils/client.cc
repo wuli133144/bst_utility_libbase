@@ -16,6 +16,8 @@
 #include "IM.RPC.pb.h"
 #include "IM.Other.pb.h"
 
+#include "ConfigFileReader.h"
+
 using boost::asio::ip::tcp;
 using namespace IM::BaseDefine;
 using namespace IM::Live;
@@ -26,22 +28,26 @@ typedef std::deque<CImPdu> chat_message_queue;
 class chat_client:public std::enable_shared_from_this<chat_client>
 {
 public:
+	
   chat_client(boost::asio::io_service& io_service,
       const boost::asio::ip::tcp::endpoint& endpoints)
-    : io_context_(io_service),
+     : io_context_(io_service),
       socket_(io_service)
+     
   {
-    do_connect(endpoints);
-	
-	m_thread_heartbeat=new thread([this,&io_service](){
-		 while(1){
-		      hearbeat();
-		      usleep(500*1000);
-		     }
-	});
+     m_thread_heartbeat=NULL;
+     do_connect(endpoints);
 	
   }
-
+	  
+  ~chat_client(){
+  
+    if(NULL!=m_thread_heartbeat){
+		 delete m_thread_heartbeat;
+		 m_thread_heartbeat=NULL;
+	}
+	
+  }
   void write(const CImPdu & msg)
   {    
         io_context_.post(
@@ -97,8 +103,20 @@ private:
           if (!ec)
           {
             do_read_header();
-          }
-        });
+			std::cout<<"link success start heartbeat"<<std::endl;
+			if(!m_thread_heartbeat){
+				 m_thread_heartbeat=new thread([this](){
+			     while(1){
+			      hearbeat();
+			      usleep(5000*1000);
+			     }
+		   
+		   });
+				}
+          	}
+	    });
+        
+       
   }
 
   void do_read_header()
@@ -152,7 +170,7 @@ private:
         {
           if (!ec)
           { 
-           // std::cout<<"do_write_pop_front"<<std::endl;
+            std::cout<<"do_write_pop_front over callback start"<<std::endl; 
             write_msgs_.pop_front();
             if (!write_msgs_.empty())
             {
@@ -208,7 +226,11 @@ int main(int argc, char* argv[])
 
     boost::asio::ip::tcp::resolver resolver(io_service);
 	
-    boost::asio::ip::tcp::endpoint endpoints(boost::asio::ip::address::from_string("172.16.117.229"), 30000);
+	CConfigFileReader config("client_netinfo.conf");
+	char* ipstr=config.GetConfigName("ServerIP1");
+	char* portstr=config.GetConfigName("ServerPort1");
+	
+    boost::asio::ip::tcp::endpoint endpoints(boost::asio::ip::address::from_string(ipstr), std::atoi(portstr));
     chat_client c(io_service, endpoints);
 
 	helper();
