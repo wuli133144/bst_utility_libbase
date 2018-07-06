@@ -69,7 +69,7 @@ int main(){
 	//INFO("WUYUJIE");
 	
 	Clogger *loger=Clogger::getInstance();
-    loger.Init("test1","log4cxx.properities");
+    loger->Init("test1","log4cxx.properities");
 	
 	INFO("WUYUJIE %d",2);
 	

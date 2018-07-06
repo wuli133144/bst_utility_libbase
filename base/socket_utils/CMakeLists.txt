@@ -19,12 +19,13 @@ ADD_DEFINITIONS( -g -W -Wall -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DAC_HAS_INFO
 #-DUSE_CACHE
 
 INCLUDE_DIRECTORIES(./ ./businiess ../base ../base/jsoncpp ../base/pb/protocol
-../base/pb/ ../base/segment ${MYSQL_INCLUDE_DIR})
-LINK_DIRECTORIES(./ ../base ${PB_LIB_DIR} ${MYSQL_LIB} ../base/slog/lib)
+../base/pb/ ../base/segment ${MYSQL_INCLUDE_DIR} /usr/include )
+LINK_DIRECTORIES(./ ../base ${PB_LIB_DIR} ${MYSQL_LIB} ../base/slog/lib  /usr/lib64)
 
 #ADD_XXXX必须在TARGET_LINK_LIBRARIES前面，否则会报错
 #ADD_LIBRARY(${PROJECTNAME} SHARED/STATIC ${SRC_LIST})
 ADD_EXECUTABLE(sunlands_db_proxy_server ${SRC_LIST})
 
-TARGET_LINK_LIBRARIES(sunlands_db_proxy_server pthread base protobuf-lite mysqlclient_r hiredis_vip curl slog crypto)
+TARGET_LINK_LIBRARIES(sunlands_db_proxy_server pthread base protobuf-lite mysqlclient_r hiredis_vip curl slog crypto 
+boost_system boost_thread )
  
