@@ -6,6 +6,9 @@
 #include <set>
 #include <utility>
 #include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/smart_ptr.hpp>
+
 //#include "chat_message.hpp"
 
 #include "public_define.h"
@@ -22,13 +25,16 @@
 	
 
 
-using boost::asio::ip::tcp;
+//using namespace boost::asio::ip::tcp;
+//using namespace boost;
+using namespace boost::asio;
+using namespace boost::system;
 
 using namespace  IM::BaseDefine;
 
 
 
-boost::asio::io_service io_service;
+
 
 
 //----------------------------------------------------------------------
@@ -86,7 +92,7 @@ class chat_session
     public std::enable_shared_from_this<chat_session>
 {
 public:
-  chat_session(boost::asio::ip::tcp::socket &socket, chat_room& room)
+  chat_session(boost::asio::ip::tcp::socket socket, chat_room& room)
     : socket_(std::move(socket)),
       room_(room)
   {
@@ -145,7 +151,7 @@ private:
     boost::asio::async_read(socket_,
                             boost::asio::buffer(pbuffer, 16),
                             [this, self,pbuffer](const boost::system::error_code ec, std::size_t /*length*/){
-          if (!ec )
+          if (!ec)
           { 
             //std::cout<<"read msg header"<<read_msg_.GetBuffer()<<std::endl;
 			std::cout<<pbuffer<<"xxxxpbuffer...."<<std::endl;
@@ -219,17 +225,23 @@ private:
 class chat_server
 {
 public:
-  chat_server(boost::asio::io_service& io_service,
+  chat_server(boost::asio::io_service& io_service1,
       const boost::asio::ip::tcp::endpoint& endpoint)
-    : acceptor_(io_service, endpoint),
-      socket_(io_service)
+    : acceptor_(io_service1, endpoint)    
+    //,socket_(io_service1)
   {
+
     do_accept();
   }
 
+
 private:
+
+
+  
   void do_accept()
   {
+    boost::asio::ip::tcp socket_(acceptor_.get_executor().context());   
     acceptor_.async_accept(socket_,
         [this](const boost::system::error_code ec)
         {
@@ -243,13 +255,14 @@ private:
           do_accept();
         });
   }
-
+  
   boost::asio::ip::tcp::acceptor acceptor_;
   chat_room room_;
-  boost::asio::ip::tcp::socket socket_;
+  //boost::asio::ip::tcp::socket socket_;
 };
 
 //----------------------------------------------------------------------
+
 
 
 int main(int argc, char* argv[])
@@ -263,7 +276,10 @@ int main(int argc, char* argv[])
     }*/
 
 
+	
+	boost::asio::io_service io_service;
 
+	
     std::list<chat_server>  servers;
 	CConfigFileReader config("server_netinfo.conf");
     char* ipstr=config.GetConfigName("ServerIP1");
@@ -272,9 +288,9 @@ int main(int argc, char* argv[])
     boost::asio::ip::tcp::endpoint endpoints(boost::asio::ip::address::from_string(ipstr), std::atoi(portstr));
 
 	servers.emplace_back(io_service, endpoints);
-    
 
     io_service.run();
+	
   }
   catch (std::exception& e)
   {
