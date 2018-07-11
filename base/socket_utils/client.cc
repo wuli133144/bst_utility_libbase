@@ -15,6 +15,7 @@
 #include "IM.Live.pb.h"
 #include "IM.RPC.pb.h"
 #include "IM.Other.pb.h"
+#include "IM.Message.pb.h"
 
 #include "ConfigFileReader.h"
 
@@ -24,6 +25,8 @@ using namespace IM::Live;
 
 
 typedef std::deque<CImPdu> chat_message_queue;
+
+
 
 class chat_client:public std::enable_shared_from_this<chat_client>
 {
@@ -223,73 +226,105 @@ int main(int argc, char* argv[])
    
 
     boost::asio::io_service io_service;
-
     boost::asio::ip::tcp::resolver resolver(io_service);
 	
 	CConfigFileReader config("client_netinfo.conf");
 	char* ipstr=config.GetConfigName("ServerIP1");
 	char* portstr=config.GetConfigName("ServerPort1");
-	
+	boost::asio::ip::tcp::socket socket(io_service);
+	//socket(io_service);
     boost::asio::ip::tcp::endpoint endpoints(boost::asio::ip::address::from_string(ipstr), std::atoi(portstr));
-    chat_client c(io_service, endpoints);
-
-	helper();
-	
-    std::thread t([&io_service](){ io_service.run(); });
-    
-    char line[2048]={0};
-	std::cout<<"please input your selection:1 ,2,3"<<std::endl;
-	
-    while (std::cin.getline(line, 2048)){
+    socket.connect(endpoints);
+	  
+	std::thread t([&io_service]{ io_service.run();});
+	std::thread f([&]{
+	while(1){
 		
-     uint32_t nselect=std::atoi(line);
-	 std::cout<<"your choice:"<<nselect<<std::endl;
-		 switch(nselect){
-		 	case 1:
-		 	{	 	
-			  //c.CreateLiveRoom(2,1111,333);
-			  
-		 	 break;
-			 
-		 	}
-			case 2:
-			{
-			  break;
-			}
-			case 3:{
-				
-			std::cout<<"case 3"<<std::endl;				
-			IM::Live::IMLiveGetRoomForbiddenStatusReq msg;
-			msg.set_live_id(2);
-		    msg.set_user_im_id(2222);
-			CImPdu pPdu;
-			pPdu.SetPBMsg(&msg);
-			//std::cout<<"cimpdu end"<<std::endl;
-			pPdu.SetCommandId(CID_LIVE_GET_ROOM_FORBIDDEN_STATUS_REQUEST);
-			//std::cout<<"setcommand end"<<std::endl;
-			pPdu.SetServiceId(SID_LIVE);
-			//std::cout<<"setservice end"<<std::endl;
-			//std::cout<<"c.write start"<<std::endl;
-			c.write(pPdu);
-			//std::cout<<"c.write end"<<std::endl;
-				break;
-			}
-			default:{
-			 std::cout<<"selection error"<<std::endl;
-			 break;
-			}
+	    IM::Other::IMHeartBeat msg;
+        CImPdu pdu;
+        pdu.SetPBMsg(&msg);
+        pdu.SetServiceId(SID_OTHER);
+        pdu.SetCommandId(CID_OTHER_HEARTBEAT);
+		
+	    socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		usleep(5000*1000);}
+	
+	});
+     std::thread work([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(40);
+			msg.set_session_id(49);
+			msg.set_msg_id(12);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
 			
-		 }
-	   
-     
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
 
-   }
-	 //sleep(3);
-     
-     c.close();
-    //t.join();
+	      std::thread work1([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(38);
+			msg.set_session_id(49);
+			msg.set_msg_id(123);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
+
+	    std::thread work2([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(39);
+			msg.set_session_id(49);
+			msg.set_msg_id(12355);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
+	 	
+	
+	//socket.send(boost::asio::buffer())
+
+	
+	 
      t.join();
+	 f.join();
+	 work.join();
+	 work1.join();
+	 work2.join();
   }
+
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
