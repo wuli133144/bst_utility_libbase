@@ -2,6 +2,11 @@
 #include "jw_pthread.h"
 #include "msgdefine.h"
 
+#include "../ex3/lua_inc/lua.h"
+#include "../ex3/lua_inc/lualib.h"
+#include "../ex3/lua_inc/lauxlib.h"
+
+
 int m_listen_socketfd;
 int m_client_socketfd;
 
@@ -16,19 +21,45 @@ void tcp_recv()
 }
 
 
+void xsend_tcp_data(int socketfd,void *pheader,void *contentData){
+       
+
+}
+
 
 void para_command_msg(struct sockaddr_in  *clientsock){
 
          CC_MsgHeader *pheader=(CC_MsgHeader *)recv_buffer_;
-		 printf("para_command_msg failed");
-		 if(pheader->messageHeader[3]='C'){
-		 	
-		 }else if(pheader->messageHeader[3]='D'){
-		 	
-		 }
+		 printf("para_command_msg start");
+		 if(pheader->messageHeader[3]='C'){ //operator command
 		 
+		     switch(pheader->controlMask){
 
+			 case CONTROLLCODE_LOGINREQUEST:
+		     	{
+		 	     //CC_LoginRequestReply 
+			 	  char reply[512];
+			 	  CC_LoginRequestReply *replyobj=(CC_LoginRequestReply *)(reply+sizeof(CC_MsgHeader));
+			      reply.result=0;
+				  strncpy(reply.devID,"CCXX",sizeof(reply.devID));
+				  strncpy(reply.devVersion,"CCXX234421",sizeof(reply.devVersion));
+				  pheader->controlMask=CONTROLLCODE_LOGINREPLY;
+				  pheader->commandLength=sizeof(CC_LoginRequestReply);
+				  //send to client
+				  xsend_tcp_data(m_client_socketfd,pheader,replyobj);
+				  break;
+			 	}
+			  
+		     }
+			 
+		 }else if(pheader->messageHeader[3]='D'){
       
+		 
+		 }else {
+
+		 
+		 }
+		    
 }
 
 //single-thread
@@ -60,8 +91,10 @@ void  child_active( struct sockaddr_in  *clientsock)
               	}
 			  case -1{
 			  	     //exit(-1);
-			  	     except_mark=1;
-				     break;
+			  	       if(errno!=EINTER){
+					   	 except_mark=1;
+			  	       	}
+					   break;
 			    }
 			  default:{
 
@@ -93,7 +126,7 @@ void  child_active( struct sockaddr_in  *clientsock)
 			  
 
 		 }
-
+          
           if(recved_size > = sizeof(CC_MsgHeader)){
 		  	  break;
 		  }

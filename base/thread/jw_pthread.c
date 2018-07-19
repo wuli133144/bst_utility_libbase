@@ -16,6 +16,11 @@ void create_pthread_detach(pthread_t *pid,void *(*start_routine)(void *),void *a
 	  }
 
 	  pthread_create(pid,&attr,start_routine,arg);
+
+	  nRet=pthread_detach(pid);
+	  if(nRet < 0){
+	  	 goto  RESET_PTHREAD_ATTR;
+	  }
      
 	  
 	  RESET_PTHREAD_ATTR:
