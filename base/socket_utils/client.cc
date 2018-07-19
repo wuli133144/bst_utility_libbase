@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
 			
 			CImPdu pdu;
 		    pdu.SetPBMsg(&msg);
-		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetServiceId(SID_MSG);                            
 		    pdu.SetCommandId(CID_MSG_DATA_ACK);
 			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
 		   
@@ -312,6 +312,109 @@ int main(int argc, char* argv[])
 		   
            
 	 });
+	 //1816394 1858937 1859909 1860721
+
+	    std::thread work3([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(1816394);
+			msg.set_session_id(49);
+			msg.set_msg_id(12355);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
+	  std::thread work4([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(1858937);
+			msg.set_session_id(49);
+			msg.set_msg_id(12355);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
+	  std::thread work5([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(1859909);
+			msg.set_session_id(49);
+			msg.set_msg_id(12355);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
+	  std::thread work6([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(1860721);
+			msg.set_session_id(49);
+			msg.set_msg_id(12355);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		      
+	 });
+
+	 	  std::thread work7([&]{
+	       std::cout<<"test msg ack Cache function"<<std::endl;
+		    
+		    IM::Message::IMMsgDataAck msg;
+			msg.set_user_id(54);
+			msg.set_session_id(49);
+			msg.set_msg_id(12355);
+			msg.set_create_time((uint64_t)time(NULL));
+			msg.set_session_type(2);
+			msg.set_result_code(0);
+			
+			
+			CImPdu pdu;
+		    pdu.SetPBMsg(&msg);
+		    pdu.SetServiceId(SID_MSG);
+		    pdu.SetCommandId(CID_MSG_DATA_ACK);
+			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
+		   
+           
+	 });
+	 	
 	 	
 	
 	//socket.send(boost::asio::buffer())
@@ -323,6 +426,12 @@ int main(int argc, char* argv[])
 	 work.join();
 	 work1.join();
 	 work2.join();
+	 work3.join();
+	 work4.join();
+	 work5.join();
+	 work6.join();
+	 work7.join();
+	 
   }
 
   catch (std::exception& e)
