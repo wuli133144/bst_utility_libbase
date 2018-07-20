@@ -19,25 +19,25 @@ void *start(void *args){
 }
 
 
-int add(lua_State *l,int x,int y){
-       int num=lua_gettop(l);
-	   printf("stack size=%d",num);
-	   lua_getglobal(l,"add");
-	   printf("stack size=%d",lua_gettop(l);//1
-	   lua_pushnumber(l,x);
-	   lua_pushnumber(l,y);
-	   printf("stack size=%d",lua_gettop(l);//3
-	   lua_pcall(l,2,1,0);
-	   printf("stack size=%d",lua_gettop(l);//1
-	   int sum=lua_tonumber(l,1);
-	   //int a=lua_tonumber(l,-2);
-	   //int b=lua_tonumber(l,-3);
-	   
-	   printf("stack size=%d sum=%d ",lua_gettop(l),sum);	
-	   return sum;
+extern lua_State *L;
+
+
+char * filter_http(lua_State *l, const char * http){
+         int capacity=lua_gettop(l);
+		 printf("stack size=%d\n",capacity);
+		 lua_getglobal(l,"http_filter");
+		 if (lua_isfunction(l,-1))
+		 {
+		      lua_pushstring(l,http);
+		 }
+		 lua_pcall(l,1,1,0);
+		 int length=strlen(lua_tostring(l,-1));
+		 //printf("http method %s\n",lua_tostring(l,-1));
+         const char *ptemp=(char *)malloc(length*sizeof(char));
+		 strncpy(ptemp,lua_tostring(l,-1),length);
+		 lua_pop(l,-1);
+		 return ptemp;
 }
-
-
 
 
 
@@ -53,9 +53,14 @@ int main(){
   load_config("config.lua");
   get_Value_string("ipaddr",listen_addr);
   get_Value_int("port",&listen_port);
+  char *p=filter_http(L,"https://www.baidu.com/get?key1=fsdfa&&key2=432qfds42q3");
+  print(" main %s\n",p)
+  free(p);
+  
   close_config();
 
-  start_socket_server();
+  
+  //start_socket_server();
 
 
   printf("%s %d",listen_addr,listen_port);

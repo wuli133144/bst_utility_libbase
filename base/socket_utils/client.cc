@@ -254,8 +254,8 @@ int main(int argc, char* argv[])
 	       std::cout<<"test msg ack Cache function"<<std::endl;
 		    
 		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(40);
-			msg.set_session_id(49);
+			msg.set_user_id(3662414);
+			msg.set_session_id(7899);
 			msg.set_msg_id(12);
 			msg.set_create_time((uint64_t)time(NULL));
 			msg.set_session_type(2);
@@ -275,9 +275,10 @@ int main(int argc, char* argv[])
 	       std::cout<<"test msg ack Cache function"<<std::endl;
 		    
 		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(38);
-			msg.set_session_id(49);
-			msg.set_msg_id(123);
+			msg.set_user_id(3662415);
+			msg.set_session_id(7899);
+			msg.set_msg_id(12);
+
 			msg.set_create_time((uint64_t)time(NULL));
 			msg.set_session_type(2);
 			msg.set_result_code(0);
@@ -296,9 +297,10 @@ int main(int argc, char* argv[])
 	       std::cout<<"test msg ack Cache function"<<std::endl;
 		    
 		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(39);
-			msg.set_session_id(49);
-			msg.set_msg_id(12355);
+			msg.set_user_id(3662413);
+			msg.set_session_id(7899);
+			msg.set_msg_id(12);
+
 			msg.set_create_time((uint64_t)time(NULL));
 			msg.set_session_type(2);
 			msg.set_result_code(0);
@@ -318,9 +320,10 @@ int main(int argc, char* argv[])
 	       std::cout<<"test msg ack Cache function"<<std::endl;
 		    
 		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(1816394);
-			msg.set_session_id(49);
-			msg.set_msg_id(12355);
+			msg.set_user_id(3662412);
+			msg.set_session_id(7899);
+			msg.set_msg_id(12);
+
 			msg.set_create_time((uint64_t)time(NULL));
 			msg.set_session_type(2);
 			msg.set_result_code(0);
@@ -338,69 +341,10 @@ int main(int argc, char* argv[])
 	       std::cout<<"test msg ack Cache function"<<std::endl;
 		    
 		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(1858937);
-			msg.set_session_id(49);
-			msg.set_msg_id(12355);
-			msg.set_create_time((uint64_t)time(NULL));
-			msg.set_session_type(2);
-			msg.set_result_code(0);
-			
-			
-			CImPdu pdu;
-		    pdu.SetPBMsg(&msg);
-		    pdu.SetServiceId(SID_MSG);
-		    pdu.SetCommandId(CID_MSG_DATA_ACK);
-			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
-		   
-           
-	 });
-	  std::thread work5([&]{
-	       std::cout<<"test msg ack Cache function"<<std::endl;
-		    
-		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(1859909);
-			msg.set_session_id(49);
-			msg.set_msg_id(12355);
-			msg.set_create_time((uint64_t)time(NULL));
-			msg.set_session_type(2);
-			msg.set_result_code(0);
-			
-			
-			CImPdu pdu;
-		    pdu.SetPBMsg(&msg);
-		    pdu.SetServiceId(SID_MSG);
-		    pdu.SetCommandId(CID_MSG_DATA_ACK);
-			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
-		   
-           
-	 });
-	  std::thread work6([&]{
-	       std::cout<<"test msg ack Cache function"<<std::endl;
-		    
-		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(1860721);
-			msg.set_session_id(49);
-			msg.set_msg_id(12355);
-			msg.set_create_time((uint64_t)time(NULL));
-			msg.set_session_type(2);
-			msg.set_result_code(0);
-			
-			
-			CImPdu pdu;
-		    pdu.SetPBMsg(&msg);
-		    pdu.SetServiceId(SID_MSG);
-		    pdu.SetCommandId(CID_MSG_DATA_ACK);
-			socket.send(boost::asio::buffer(pdu.GetBuffer(),pdu.GetLength()));
-		      
-	 });
+			msg.set_user_id(5001);
+			msg.set_session_id(7899);
+			msg.set_msg_id(12);
 
-	 	  std::thread work7([&]{
-	       std::cout<<"test msg ack Cache function"<<std::endl;
-		    
-		    IM::Message::IMMsgDataAck msg;
-			msg.set_user_id(54);
-			msg.set_session_id(49);
-			msg.set_msg_id(12355);
 			msg.set_create_time((uint64_t)time(NULL));
 			msg.set_session_type(2);
 			msg.set_result_code(0);
@@ -414,6 +358,7 @@ int main(int argc, char* argv[])
 		   
            
 	 });
+	
 	 	
 	 	
 	
@@ -428,9 +373,7 @@ int main(int argc, char* argv[])
 	 work2.join();
 	 work3.join();
 	 work4.join();
-	 work5.join();
-	 work6.join();
-	 work7.join();
+
 	 
   }
 
