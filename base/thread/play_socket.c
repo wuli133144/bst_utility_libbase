@@ -68,20 +68,19 @@ int  tcp_send(int fd,void *src,int length){
 
 
 
-
 void xsend_tcp_data(int socketfd,void *pheader,void *contentData){
-       int sended_length=0;
-	   sended_length=tcp_send(socketfd,pheader,sizeof(CC_MsgHeader));
-	   if(sended_length < 0){
-	   	  return;
-	   }
-	   CC_MsgHeader *msgHeader=(CC_MsgHeader *)(pheader);
-	   
-	   sended_length=tcp_send(socketfd,contentData,msgHeader->commandLength);
+   int sended_length=0;
+   sended_length=tcp_send(socketfd,pheader,sizeof(CC_MsgHeader));
+   if(sended_length < 0){
+   	  return;
+   }
+   CC_MsgHeader *msgHeader=(CC_MsgHeader *)(pheader);
+   
+   sended_length=tcp_send(socketfd,contentData,msgHeader->commandLength);
 
-	   if(sended_length <0){
-	       return;	
-	   }
+   if(sended_length <0){
+       return;	
+   }
 
 }
 
@@ -89,58 +88,58 @@ void xsend_tcp_data(int socketfd,void *pheader,void *contentData){
 
 //start translate video
 void *start_send_video( void * args){
-       int clientsocketfd=*((int *)args);
-	   //capture video
-	   //capture sound 
+   int clientsocketfd=*((int *)args);
+   //capture video
+   //capture sound 
 		
 
 }
 
 void para_command_msg(struct sockaddr_in  *clientsock){
 
-         CC_MsgHeader *pheader=(CC_MsgHeader *)recv_buffer_;
-		 printf("para_command_msg start");
-		 if(pheader->messageHeader[3]='C'){ //operator command
-		 
-		     switch(pheader->controlMask){
+     CC_MsgHeader *pheader=(CC_MsgHeader *)recv_buffer_;
+	 printf("para_command_msg start");
+	 if(pheader->messageHeader[3]='C'){ //operator command
+	 
+	     switch(pheader->controlMask){
 
-				 case CONTROLLCODE_LOGINREQUEST:
-			     	{
-			 	      //CC_LoginRequestReply 
-				 	  char reply[512];
-				 	  CC_LoginRequestReply *replyobj=(CC_LoginRequestReply *)(reply+sizeof(CC_MsgHeader));
-				      reply.result=0;
-					  strncpy(reply.devID,"CCXX",sizeof(reply.devID));
-					  strncpy(reply.devVersion,"CCXX234421",sizeof(reply.devVersion));
-					  pheader->controlMask=CONTROLLCODE_LOGINREPLY;
-					  pheader->commandLength=sizeof(CC_LoginRequestReply);
-					  //send to client
-					  xsend_tcp_data(m_client_socketfd,pheader,replyobj);
-					  break;
-				 	}
-				    default:
-				      break;
-		     }
-			 
-		 }else if(pheader->messageHeader[3]='D'){
-               switch (pheader->controlMask){
-                   //handle video translation
-                  case CONTROLLCODE_VIDEOTRANSLATION_REQUEST:
-				  	{
-				  	      create_pthread_detach(NULL,start_send_video,&m_client_socketfd);
-				  	}
-				    break;
-				 default:
-				 	break;
+			 case CONTROLLCODE_LOGINREQUEST:
+		     	{
+		 	      //CC_LoginRequestReply 
+			 	  char reply[512];
+			 	  CC_LoginRequestReply *replyobj=(CC_LoginRequestReply *)(reply+sizeof(CC_MsgHeader));
+			      reply.result=0;
+				  strncpy(reply.devID,"CCXX",sizeof(reply.devID));
+				  strncpy(reply.devVersion,"CCXX234421",sizeof(reply.devVersion));
+				  pheader->controlMask=CONTROLLCODE_LOGINREPLY;
+				  pheader->commandLength=sizeof(CC_LoginRequestReply);
+				  //send to client
+				  xsend_tcp_data(m_client_socketfd,pheader,replyobj);
+				  break;
+			 	}
+			    default:
+			      break;
+	     }
+		 
+	 }else if(pheader->messageHeader[3]='D'){
+	       switch (pheader->controlMask){
+	           //handle video translation
+	          case CONTROLLCODE_VIDEOTRANSLATION_REQUEST:
+			  	{
+			  	      create_pthread_detach(NULL,start_send_video,&m_client_socketfd);
+			  	}
+			    break;
+			 default:
+			 	break;
 
-			   }
-		 
-		 
-		 }else {
+		   }
+	 
+	 
+	 }else {
 
-		 
-		 }
-		    
+	 
+	 }
+	    
 }
 
 //single-thread
