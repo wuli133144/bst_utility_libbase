@@ -2,9 +2,6 @@
 #include "jw_pthread.h"
 #include "msgdefine.h"
 
-#include "../ex3/lua_inc/lua.h"
-#include "../ex3/lua_inc/lualib.h"
-#include "../ex3/lua_inc/lauxlib.h"
 
 
 int m_listen_socketfd;
@@ -14,18 +11,90 @@ char *recv_buffer_=NULL;
 int recved_size=0;
 
 
-void tcp_recv()
+void tcp_recv(int fd,void *src,int length)
 {
-      
+
+      if(src == NULL || length <1){
+	  	  return -1;
+	  }
+	  int recved_length=0;
+	  int nRet=0;
+	  while(length > 0)
+	  {
+	     nRet=recv(fd,(char *)src,length,0);
+		 if(nRet < 0 && ERRNO!=EINTER){//exception
+		    recved_size=-1;
+		 	break;
+		 }
+	     if(nRet==0 &&(ERRNO==EWOULDBLOCK || ERRNO==EAGAIN)){
+		 	continue;
+		 }
+         recved_size+=nRet;
+		 length-=recved_size;
+		 src+=nRet;
+	  }
+
+
+	  return recved_size;
 
 }
+
+
+
+int  tcp_send(int fd,void *src,int length){
+       if(src ==NULL||sz < 1)
+	    	return -1;
+	    int sended_size=0;
+	    int nRet=0;
+	    while(length > 0){
+		    nRet=send(fd,(char *)src,length,0);
+			
+			if(nRet < 0 && ERRNO!=EINTER){//execption sys
+			    sended_size=-1;
+				break;
+			}
+			
+			if(sended_size==0 &&(ERRNO==EWOULDBLOCK || ERRNO==EAGAIN) ){
+			  continue;
+			}
+			sended_size+=nRet;
+			length-=nRet;
+			src+=nRet;
+			
+		}
+		
+       return sended_size;
+}
+
+
 
 
 void xsend_tcp_data(int socketfd,void *pheader,void *contentData){
-       
+       int sended_length=0;
+	   sended_length=tcp_send(socketfd,pheader,sizeof(CC_MsgHeader));
+	   if(sended_length < 0){
+	   	  return;
+	   }
+	   CC_MsgHeader *msgHeader=(CC_MsgHeader *)(pheader);
+	   
+	   sended_length=tcp_send(socketfd,contentData,msgHeader->commandLength);
+
+	   if(sended_length <0){
+	       return;	
+	   }
 
 }
 
+
+
+//start translate video
+void *start_send_video( void * args){
+       int clientsocketfd=*((int *)args);
+	   //capture video
+	   //capture sound 
+		
+
+}
 
 void para_command_msg(struct sockaddr_in  *clientsock){
 
@@ -35,25 +104,37 @@ void para_command_msg(struct sockaddr_in  *clientsock){
 		 
 		     switch(pheader->controlMask){
 
-			 case CONTROLLCODE_LOGINREQUEST:
-		     	{
-		 	     //CC_LoginRequestReply 
-			 	  char reply[512];
-			 	  CC_LoginRequestReply *replyobj=(CC_LoginRequestReply *)(reply+sizeof(CC_MsgHeader));
-			      reply.result=0;
-				  strncpy(reply.devID,"CCXX",sizeof(reply.devID));
-				  strncpy(reply.devVersion,"CCXX234421",sizeof(reply.devVersion));
-				  pheader->controlMask=CONTROLLCODE_LOGINREPLY;
-				  pheader->commandLength=sizeof(CC_LoginRequestReply);
-				  //send to client
-				  xsend_tcp_data(m_client_socketfd,pheader,replyobj);
-				  break;
-			 	}
-			  
+				 case CONTROLLCODE_LOGINREQUEST:
+			     	{
+			 	      //CC_LoginRequestReply 
+				 	  char reply[512];
+				 	  CC_LoginRequestReply *replyobj=(CC_LoginRequestReply *)(reply+sizeof(CC_MsgHeader));
+				      reply.result=0;
+					  strncpy(reply.devID,"CCXX",sizeof(reply.devID));
+					  strncpy(reply.devVersion,"CCXX234421",sizeof(reply.devVersion));
+					  pheader->controlMask=CONTROLLCODE_LOGINREPLY;
+					  pheader->commandLength=sizeof(CC_LoginRequestReply);
+					  //send to client
+					  xsend_tcp_data(m_client_socketfd,pheader,replyobj);
+					  break;
+				 	}
+				    default:
+				      break;
 		     }
 			 
 		 }else if(pheader->messageHeader[3]='D'){
-      
+               switch (pheader->controlMask){
+                   //handle video translation
+                  case CONTROLLCODE_VIDEOTRANSLATION_REQUEST:
+				  	{
+				  	      create_pthread_detach(NULL,start_send_video,&m_client_socketfd);
+				  	}
+				    break;
+				 default:
+				 	break;
+
+			   }
+		 
 		 
 		 }else {
 
@@ -97,41 +178,38 @@ void  child_active( struct sockaddr_in  *clientsock)
 					   break;
 			    }
 			  default:{
-
-			          if(FD_ISSET(m_client_socketfd,&read_sets)){
-					  	   //tcp_recv();
-					  	   recvsize=recv(m_client_socketfd,recv_buffer_+recved_size,msgheaderSize,0);
-                           if(recvsize < 0){
-						   	  except_mark=1;
-							  break;
-						   }else if(recvsize ==0&&errno==EWOULDBLOCK){
-						   	  break;
-						   }else{
-						       if(recvsize >=sizeof(CC_MsgHeader)){
-							   	 break;
-							   }
-							   
-						       msgheaderSize-=recvsize;
-						       recved_size+=recvsize;
-							   break;
+			  
+		          if(FD_ISSET(m_client_socketfd,&read_sets)){
+				  	   //tcp_recv();
+				  	   recvsize=recv(m_client_socketfd,recv_buffer_+recved_size,msgheaderSize,0);
+                       if(recvsize < 0){
+					   	  except_mark=1;
+						  break;
+					   }else if(recvsize ==0&&errno==EWOULDBLOCK){
+					   	  break;
+					   }else{
+					       if(recvsize >=sizeof(CC_MsgHeader)){
+						   	 break;
 						   }
 						   
-					  }else {
-					    wait_count++;
-						break;
-					  }
+					       msgheaderSize-=recvsize;
+					       recved_size+=recvsize;
+						   break;
+					   }
+					   
+				  }else {
+				    wait_count++;
+					break;
+				  }
 					  //break;
 			  
 			  }
 			  
-
 		 }
-          
-          if(recved_size > = sizeof(CC_MsgHeader)){
+		 
+         if(recved_size > = sizeof(CC_MsgHeader)){
 		  	  break;
-		  }
-		  
-	             
+		 }
        }
 	    if(except_mark){
 			 if(m_client_socketfd){
@@ -172,7 +250,6 @@ void accept_progress()
 			continue;
 		}
 		child_active(&clientsock);
-
 		
 	  }
  
