@@ -55,7 +55,7 @@ int main(){
   get_Value_int("port",&listen_port);
   close_config();
 
-  
+  start_socket_server();
 
 
   printf("%s %d",listen_addr,listen_port);

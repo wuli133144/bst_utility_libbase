@@ -95,6 +95,15 @@ void *start_send_video( void * args){
 
 }
 
+
+void param_cmd_msg(struct sockaddr_in *sock)
+{
+
+     //param base command for login and heartbeat
+     
+
+
+}
 void para_command_msg(struct sockaddr_in  *clientsock){
 
      CC_MsgHeader *pheader=(CC_MsgHeader *)recv_buffer_;
@@ -120,7 +129,8 @@ void para_command_msg(struct sockaddr_in  *clientsock){
 			    default:
 			      break;
 	     }
-		 
+
+		 param_cmd_msg(clientsock);
 	 }else if(pheader->messageHeader[3]='D'){
 	       switch (pheader->controlMask){
 	           //handle video translation
@@ -249,7 +259,7 @@ void accept_progress()
 			continue;
 		}
 		child_active(&clientsock);
-		
+		usleep(2000*1000);//sleep 2seconds,
 	  }
  
 }
