@@ -125,6 +125,7 @@ void para_command_msg(struct sockaddr_in  *clientsock){
 				  //send to client
 				  xsend_tcp_data(m_client_socketfd,pheader,replyobj);
 				  break;
+				  
 			 	}
 			    default:
 			      break;
