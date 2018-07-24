@@ -39,8 +39,8 @@ function send_email() {
 function send_sms() {
     # yp: 13683013560, jt: 18612109634, jianjian: 18614064515, yuejie: 15210855382, qiongying, yujie
     #MOBILE_LIST='13683013560'
-    MOBILE_LIST='13683013560 18612109634 18614064515 15210855382 13261127824 15210717453'
-    SMS_URL='http://sms.shangdejigou.cn/gateway-war/gateway/sendSms/sendSms.action'
+    MOBILE_LIST='###############'
+    SMS_URL=''
     # send short message
     [[ -z $1 ]] && echo "\$1 is null" && return 1
 
@@ -178,63 +178,7 @@ function monitor() {
 
         ##############################################################
         # step 3: check admin server HTTP interface on push_server
-        ##############################################################
-        if [[ $SERVER == "sunlands_push_server" ]]; then
-	          typeset send=0
-	          
-	          # 1. check HTTP server
-            curl --connect-timeout 10  http://42.62.110.136/get_my_groups?user_iddf=111 > /dev/null 2>&1
-	    ret36=$?
-            curl --connect-timeout 10  http://42.62.110.137/get_my_groups?user_iddf=111 > /dev/null 2>&1
-            ret=$?
-            (( ret = ret + ret36 ))
-            if (( $ret != 0 )); then
-		            # 28 means time out
-		            if (( $ret == 28 )); then
-                   disp "get a curl time out, err_to_count = $err_to_count"
-		               ((err_to_count = err_to_count + 1))
-		               if (( $err_to_count == 3 )); then
-                  			send=1
-                  			err_to_count=0
-                   fi
-                else
-                   send=1
-		            fi
-
-                err_info="ip=$MY_IP, pwd=$MY_DIR.\n"
-                err_info+="$(date): [ERROR] check admin server interface: http://info.social.im.sunlands.com/get_my_groups?user_iddf=111 failed. ret=$ret"
-                (( $send == 1 )) && handle_error "$err_info"
-            else
-		            err_to_count=0
-                disp "check admin server HTTP, OK"
-            fi
-
-	          # 2. check xiaomi push server
-	          typeset send2=0
-	          curl --connect-timeout 10 https://api.xmpush.xiaomi.com/v2/multi_messages/regids  > /dev/null 2>&1
-            ret=$?
-            if (( $ret != 0 )); then
-                 # 28 means time out
-                 if (( $ret == 28 || $ret == 7 )); then
-                   disp "get a curl time out, err_to_count2 = $err_to_count2"
-		               ((err_to_count2 = err_to_count2 + 1))
-		               if (( $err_to_count2 == 3 )); then
-                  			send2=1
-                  			err_to_count2=0
-                   fi
-                else
-                   send2=1
-            fi                 
-                 err_info="ip=$MY_IP, pwd=$MY_DIR.\n"
-                 err_info+="$(date): [ERROR] check xiaomi push server interface: https://api.xmpush.xiaomi.com/v2/multi_messages/regids failed. ret=$ret"
-                 (( $send2 == 1 )) && handle_error "$err_info"
-            else
-                 err_to_count2=0
-                 disp "check xiaomi push server interface, OK"
-            fi
-
-        fi
-        
+       
     	sleep $INTERVAL
     	
     done
