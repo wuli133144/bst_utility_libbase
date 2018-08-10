@@ -46,13 +46,13 @@ public:
 	string       get(string & url);
 	char   *     get2(const char *);
 	void         post(string&request,string &response);
-    void         post2(const char *request, char *);
+	void         post2(const char *request, char *);
 
 private:
 	
 	stringstream  m_headerdata;
 	stringstream  m_response;
-    stringstream  m_request;
+	stringstream  m_request;
 	stringstream  m_version;
 	stringstream  m_url;
 	stringstream  m_cookies;
@@ -72,9 +72,9 @@ private:
 
 public:
 
-    static void getref();
+	static void getref();
 	static bool isNull();
-	
+
 	static  int refcount;
 	static  int refcount0;
 	static  pthread_mutex_t m_mutex;
